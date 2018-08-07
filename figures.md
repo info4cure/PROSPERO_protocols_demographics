@@ -36,6 +36,10 @@ library(tidyverse)
 ```
 
 ```r
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 library(rworldmap)
 ```
 
@@ -52,6 +56,7 @@ library(rworldmap)
 ```
 
 ```r
+<<<<<<< HEAD
 library(tm)
 ```
 
@@ -81,6 +86,10 @@ library(wordcloud)
 ```r
 library(RColorBrewer)
 
+=======
+=======
+>>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
+>>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 pubmed2df<-function(D){
   
   records=D
@@ -482,7 +491,15 @@ QueryId(search_query)
 
 
 # 1. FIGURE 2.
+<<<<<<< HEAD
 This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+=======
+<<<<<<< HEAD
+This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+=======
+This panel represent the main features of included protocols. (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'. (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+>>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
+>>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 
 ```r
 ##### 0: read and tidy dataset ---------------
@@ -527,6 +544,10 @@ ggtitle(" ")
 ```
 
 ![](figures_files/figure-html/Fig_2-1.png)<!-- -->
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
 
 
@@ -555,6 +576,7 @@ mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLeg
 ```
 
 ![](figures_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+<<<<<<< HEAD
 (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
 
@@ -1084,6 +1106,10 @@ wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.
 ![](figures_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 (f) World cloud of 'scientific journals'.
+=======
+=======
+>>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
+>>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 
 
 ,(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. 
