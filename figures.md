@@ -19,196 +19,11 @@ Corresponding author: juanruanoruiz@mac.com
 
 
 
-```r
-####  R packages  ---------------
-library(RISmed)
-library(readr)
-library(tidyverse)
-```
-
-```
-## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ──
-```
-
-```
-## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
-## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
-## ✔ tidyr   0.8.0     ✔ stringr 1.3.1
-## ✔ ggplot2 3.0.0     ✔ forcats 0.3.0
-```
-
-```
-## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
-```
-
-```r
-library(rworldmap)
-```
-
-```
-## Loading required package: sp
-```
-
-```
-## ### Welcome to rworldmap ###
-```
-
-```
-## For a short introduction type : 	 vignette('rworldmap')
-```
-
-```r
-library(tm)
-```
-
-```
-## Loading required package: NLP
-```
-
-```
-## 
-## Attaching package: 'NLP'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     annotate
-```
-
-```r
-library(wordcloud)
-```
-
-```
-## Loading required package: RColorBrewer
-```
-
-```r
-library(RColorBrewer)
-
-####  R functions  ---------------
-
-####  pubmed2df function converts a PubMed/MedLine collection (obtained through a query performed with RISmed package) and create a data frame from it, with cases corresponding to articles and variables to Field Tags as proposed by Clarivate Analytics WoS. -----------------
-pubmed2df<-function(D){
-  
-  records=D
-  rm(D)
-  ## Author 
-  AU=unlist(lapply(Author(records),function(a){
-    paste(paste(a$LastName,a$Initials,sep=" "),collapse =";")}))
-  
-  ## Total citations
-  cat("\nDownloading updated citations from PubMed/MedLine...\n\n")
-  TC=Cited(records)
-  
-  
-  ## Country
-  AU_CO=Country(records)
-  
-  ##
-  CO=
-  
-  ## DOI
-  DI=ELocationID(records)
-  
-  ## Source ISO
-  JI=ISOAbbreviation(records)
-  
-  ## ISSN
-  ISSN=ISSN(records)
-  
-  ## Volume
-  VOL=Volume(records)
-  
-  ## Issue
-  ISSUE=Issue(records)
-  
-  ## Language
-  LT=Language(records)
-  
-  ## Affiliation
-  AFF=unlist(lapply(Affiliation(records),function(a){
-    paste(a,collapse =";")}))
-  
-  ## Title
-  TI=ArticleTitle(records)
-  
-  ## Abstract
-  AB=AbstractText(records)
-  
-  ## Pub year
-  PY=YearPubmed(records)
-  
-  ## Pub type
-  DT=unlist(lapply(PublicationType(records),function(a){
-    paste(a,collapse =";")}))
-  
-  ## Article ID
-  UT=ArticleId(records)
-  
-  ## Mesh
-  MESH=unlist(lapply(Mesh(records),function(a){
-    if (is.data.frame(a)){
-      a=paste(a$Heading,collapse =";")}else{a='NA'}
-  }))
-  
-  
-  DATA <- data.frame('AU'=AU, 'TI'=TI,'AB'=AB,'PY'=PY, 'DT'=DT, 
-                            'MESH'=MESH, 'TC'=TC, 'SO'=JI, 'J9'=JI, 'JI'=JI, 'DI'=DI,'ISSN'=ISSN, 
-                            'VOL'=VOL, 'ISSUE'=ISSUE, 'LT'=LT, 'C1'=AFF, 'RP'=AFF, 'ID'=MESH,'DE'=MESH,
-                            'UT'=UT, 'AU_CO'=AU_CO, stringsAsFactors = FALSE)
-  DATA <- data.frame(lapply(DATA,toupper),stringsAsFactors = FALSE)
-  DATA$DB = "PUBMED"
-  
-  
-  return(DATA)
-}
-
-
-####  plotRanks function creates a plot similar to the critical difference plot, but applicable to any pair of ranked lists. In our case, for 'Unique vs Collaborative' country ranks comparison. -----------------
-
-plotRanks <- function(a, b, labels.offset=0.005, arrow.len=0.1)
-{
-  old.par <- par(mar=c(1,1,1,1))
-  
-  # Find the length of the vectors
-  len.1 <- length(a)
-  len.2 <- length(b)
-  
-  # Plot two columns of equidistant points
-  plot(rep(1, len.1), 1:len.1, pch=19, cex=0.3, tck=-.01,
-       xlim=c(0, 3), ylim=c(0, max(len.1, len.2)),
-       axes=F, xlab="", ylab="") # Remove axes and labels
-  points(rep(2, len.2), 1:len.2, pch=19, cex=0.3, tck=-.01)
-  
-  # Put labels next to each observation
-  text(rep(1-labels.offset, len.1), 1:len.1, a,col="darkblue",cex=0.5, adj=0, pos = 2)
-  text(rep(2+labels.offset, len.2), 1:len.2,  b,col="coral",cex=0.5, adj=0, pos = 4)
-  
-  # Now we need to map where the elements of a are in b
-  # We use the match function for this job
-  a.to.b <- match(a, b)
-  
-  # Now we can draw arrows from the first column to the second
-  arrows(rep(1.02, len.1), 1:len.1, rep(1.98, len.2), a.to.b, 
-         length=arrow.len, angle=20)
-  par(old.par)
-}
-```
 
 
 
 
 
-```r
-##### 0: read and tidy dataset ---------------
-new_data          <-  read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
-new_data          <-  subset(new_data, ALL_year>2010 & ALL_year<2018)
-new_data$ALL_year <- factor(new_data$ALL_year)
-```
 
 # Basic statistics.
 
@@ -216,8 +31,7 @@ new_data$ALL_year <- factor(new_data$ALL_year)
 ```r
 #### 2': number or reviewers->total and per protocol 
 ####
-library("stringr")
-new_data$number_of_authors_PC <- str_count(new_data$publication_authors, ";")+1
+new_data$number_of_authors_PC <- stringr::str_count(new_data$publication_authors, ";")+1
 sum(na.omit(new_data$number_of_authors_PC))
 ```
 
@@ -1738,13 +1552,71 @@ ggtitle("SRs protocols published in 'Syst Rev' or 'BMJ Open' by countries")
 (a) Frequency of protocols published from 2011 to 2017 by country comparing those protocols published 'only in a journal' with those protocols published in both 'journal and PROSPERO'.
 
 
+```r
+unique_countries<-new_data %>%
+  filter(!str_detect(ALL_country_curated, ','))
+unique_countries_all<-unique_countries %>%
+  filter(!str_detect(ALL_country_curated, '\t'))
+
+table_all_unique_countries <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_country              <- subset(table_all_unique_countries, Freq>1)
+unique_countries_dataset   <- merge(unique_countries_all, table_all_unique_countries, by.x="ALL_country_curated", by.y = "Var1", all.x = TRUE)
+unique_countries_dataset   <- unique_countries_dataset[,c(1,3,41)]
+
+ordered_unique_countries_dataset <- arrange(unique_countries_dataset, desc(ALL_country_curated, Freq))
+select<-c("UK", "AUSTRALIA", "USA", "BRAZIL", "CHINA", "CANADA","NETHERLANDS","GERMANY","ITALY","SPAIN")
+ordered_unique_countries_dataset<-ordered_unique_countries_dataset[ordered_unique_countries_dataset$ALL_country_curated %in% select, ]
+
+ggplot(na.omit(ordered_unique_countries_dataset),aes(x=reorder(ALL_country_curated, Freq), group=group, fill=group, color=group)) + 
+facet_grid(~group)+
+geom_bar()+
+coord_flip()+
+theme(axis.text.y=element_text(size=4))+
+xlab("countries") +
+ylab("nº protocols")+
+  theme(legend.position="none")+
+ggtitle("SRs 'unique protocols' published in 'Syst Rev' or 'BMJ Open' by top 10 countries")
+```
+
+![](figures_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 
-(b) Magnified vision of plot (a) centered on TOP50 most productive countries comparing those protocols published 'only in a journal', ''only at PROSPERO', and in both 'journal and PROSPERO'.
+(b) Magnified vision of plot (a) centered on top 10 most productive countries comparing those protocols published 'only in a journal', ''only at PROSPERO', and in both 'journal and PROSPERO'.
 
 
+```r
+unique_countries<-new_data %>%
+  filter(!str_detect(ALL_country_curated, ','))
+unique_countries_all<-unique_countries %>%
+  filter(!str_detect(ALL_country_curated, '\t'))
 
-(c) Evolution of 'only journal' vs 'journal and PROSPERO' protocols publications from 2011 to 2017 comparing ten selected countries.
+table_all_unique_countries <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_country              <- subset(table_all_unique_countries, Freq>1)
+unique_countries_dataset   <- merge(unique_countries_all, table_all_unique_countries, by.x="ALL_country_curated", by.y = "Var1", all.x = TRUE)
+unique_countries_dataset   <- unique_countries_dataset[,c(1,3,8,12,41)]
+
+ordered_unique_countries_dataset <- arrange(unique_countries_dataset, desc(ALL_country_curated, Freq))
+select<-c("UK", "AUSTRALIA", "USA", "BRAZIL", "CHINA", "CANADA","NETHERLANDS","GERMANY","ITALY","SPAIN")
+ordered_unique_countries_dataset<-ordered_unique_countries_dataset[ordered_unique_countries_dataset$ALL_country_curated %in% select, ]
+ordered_unique_countries_dataset<-subset(ordered_unique_countries_dataset,  publication_journal=="SYST REV"
+                                         | publication_journal=="BMJ OPEN")
+
+ordered_unique_countries_dataset$ALL_year<-as.numeric(as.character(ordered_unique_countries_dataset$ALL_year))
+
+ggplot(na.omit(ordered_unique_countries_dataset),aes(x=ALL_year,color=ALL_country_curated,linetype=group)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=ALL_country_curated,linetype=group))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_grid(publication_journal~group)+
+  scale_x_continuous(limits=c(2011, 2017), breaks = c(2011,2012,2013,2014,2015,2016,2017))+
+  xlab("Year") +
+  ylab("nº protocols")+
+  ggtitle("SRs protocols by journal")
+```
+
+![](figures_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+
+(c) Evolution of 'only journal' vs 'journal and PROSPERO' 'unique protocols' published from 2011 to 2017 comparing top 10 countries.
 
 
 # Figure 5.
