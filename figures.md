@@ -90,6 +90,8 @@ library(wordcloud)
 library(RColorBrewer)
 
 ####  R functions  ---------------
+
+####  pubmed2df function converts a PubMed/MedLine collection (obtained through a query performed with RISmed package) and create a data frame from it, with cases corresponding to articles and variables to Field Tags as proposed by Clarivate Analytics WoS. -----------------
 pubmed2df<-function(D){
   
   records=D
@@ -163,6 +165,37 @@ pubmed2df<-function(D){
   
   
   return(DATA)
+}
+
+
+####  plotRanks function creates a plot similar to the critical difference plot, but applicable to any pair of ranked lists. In our case, for 'Unique vs Collaborative' country ranks comparison. -----------------
+
+plotRanks <- function(a, b, labels.offset=0.005, arrow.len=0.1)
+{
+  old.par <- par(mar=c(1,1,1,1))
+  
+  # Find the length of the vectors
+  len.1 <- length(a)
+  len.2 <- length(b)
+  
+  # Plot two columns of equidistant points
+  plot(rep(1, len.1), 1:len.1, pch=19, cex=0.3, tck=-.01,
+       xlim=c(0, 3), ylim=c(0, max(len.1, len.2)),
+       axes=F, xlab="", ylab="") # Remove axes and labels
+  points(rep(2, len.2), 1:len.2, pch=19, cex=0.3, tck=-.01)
+  
+  # Put labels next to each observation
+  text(rep(1-labels.offset, len.1), 1:len.1, a,col="darkblue",cex=0.5, adj=0, pos = 2)
+  text(rep(2+labels.offset, len.2), 1:len.2,  b,col="coral",cex=0.5, adj=0, pos = 4)
+  
+  # Now we need to map where the elements of a are in b
+  # We use the match function for this job
+  a.to.b <- match(a, b)
+  
+  # Now we can draw arrows from the first column to the second
+  arrows(rep(1.02, len.1), 1:len.1, rep(1.98, len.2), a.to.b, 
+         length=arrow.len, angle=20)
+  par(old.par)
 }
 ```
 
@@ -1683,6 +1716,24 @@ ggtitle("SRs protocols by journal")+
 This panel represent frequency and time-course changes of SR protocol publication by countries.  
 
 
+```r
+new_data_journal_top_2<-subset(new_data_journal,  publication_journal=="SYST REV"
+                               | publication_journal=="BMJ OPEN")
+
+table_all_countries <- as.data.frame(table(new_data_journal_top_2[,c(16)]))
+all_countries<-merge(new_data_journal_top_2, table_all_countries, by.x="ALL_country_curated", by.y = "Var1", all.x = TRUE)
+
+ggplot(na.omit(all_countries[,c(1,3,41)]),aes(x=(reorder(ALL_country_curated, Freq)), group=group, fill=group, color=group)) + 
+facet_grid(~group)+
+geom_bar()+
+coord_flip()+
+theme(axis.text.y=element_text(size=4))+
+xlab("countries") +
+ylab("nº protocols")+
+ggtitle("SRs protocols published in 'Syst Rev' or 'BMJ Open' by countries")
+```
+
+![](figures_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 (a) Frequency of protocols published from 2011 to 2017 by country comparing those protocols published 'only in a journal' with those protocols published in both 'journal and PROSPERO'.
 
@@ -1694,4 +1745,54 @@ This panel represent frequency and time-course changes of SR protocol publicatio
 
 
 (c) Evolution of 'only journal' vs 'journal and PROSPERO' protocols publications from 2011 to 2017 comparing ten selected countries.
-(a) Frequency of protocols published from 2011 to 2017 by country comparing those protocols published 'only in a journal' with those protocols published in both 'journal and PROSPERO'.
+
+
+# Figure 5.
+
+
+```r
+all_rank    <- read.csv(file="both_rank_lists_countries.csv", sep=";")
+unique      <- rev(as.vector(all_rank$country_unique))
+colaborate  <- rev(as.vector(all_rank$country_col))
+plotRanks(unique,colaborate)
+```
+
+![](figures_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+Rank discrepancies between two ordered lists of reviewers' affiliation countries. The 'Unique protocols' column displays a descendent list of reviewers' affiliation countries that  produced protocols for which all reviewers' institutions belonged to an unique country. The 'Collaborative protocols' column displays a ranked list of reviewers' affiliation countries that collaborated with other reviewers' affiliation countries to produce protocols for SRs. Arrows connect the same country from first to second list. Countries represented only in one of the lists are not connected to/by any arrow. 
+
+The final plot appearing in the manuscript was edited using Keynote to get countries sub-grouped (Q1:Q4) by cutting through 25\%, 50\%, and 75\% of total number of countries in each list. When comparing 'Unique protocols' and 'Collaborative protocols' lists, country position is considered being modified if the edge connects two different subgroups (i.e., Q1\rightarrow\text{Q3}).\hspace{0.1cm} Direction\hspace{0.1cm} of\hspace{0.1cm} the\hspace{0.1cm} change\hspace{0.1cm} defines\hspace{0.1cm} 'upgrading'\hspace{0.1cm} (Q2\rightarrow Q1,Q3\rightarrow Q1,Q4\rightarrow Q1, Q3\rightarrow Q2,Q4\rightarrow Q3)\hspace{0.1cm} or\hspace{0.1cm} 'downgrading' \hspace{0.1cm}the \hspace{0.1cm}rank \hspace{0.1cm}position\hspace{0.1cm}of\hspace{0.1cm}any\hspace{0.1cm}country \hspace{0.1cm}(Q1\rightarrow Q2,Q1\rightarrow Q3,Q1\rightarrow Q4,Q2\rightarrow Q3,Q2\rightarrow Q4,Q3\rightarrow Q4).
+
+
+# Figure 6.
+
+Analysis of protocol publication patterns by most productive countries. 
+
+
+```r
+db_3<-read.csv(file="db_2.csv", sep=";")
+db_3$FINAL_ORDEN<-as.factor(db_3$FINAL_ORDEN)
+
+a <- db_3$continente_color
+
+ggplot(na.omit(db_3[,c("min_year", "ALL_country_curated", "group", "FINAL_ORDEN", "continente_color")]), aes(x=min_year, y=forcats::fct_reorder(ALL_country_curated,desc(FINAL_ORDEN)), color=group, shape=group, group=interaction(ALL_country_curated, group)))+
+  geom_point(aes(colour=group, group=interaction(y=forcats::fct_reorder(ALL_country_curated,desc(FINAL_ORDEN)), group)), size=3)+  
+  #geom_jitter()+
+  geom_line(aes(group=interaction(y=forcats::fct_reorder(ALL_country_curated,desc(FINAL_ORDEN)), group)),color="grey")+
+  scale_x_discrete(limits=c(2011,2012,2013,2014,2015,2016,2017,2018))+
+  theme(axis.text.y=element_text(colour="continente_color"))+
+  theme_linedraw(base_size = 7)+
+  xlab("Year of first protocol")+
+  ylab(" ")
+```
+
+```
+## geom_path: Each group consists of only one observation. Do you need to
+## adjust the group aesthetic?
+```
+
+![](figures_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+Countries are listed in a descendent order based on their 'Unique protocol' productivity. Points represent a hallmark in every country's history of protocol publication: first time to publish a protocol in 'only a journal' (red dot), 'only at PROSPERO' (green triangle), and in both 'journal and PROSPERO' (blue square). 
+
+The final plot appearing in the manuscript was edited using Keynote to get arrows connecting two (by a dotted line) or more (by a full line) hallmarks to emphasize how much time is taken for a country to adopt a new way of publication.
