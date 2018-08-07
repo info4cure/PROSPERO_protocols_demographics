@@ -1,17 +1,25 @@
 ---
-title: "R Notebook"
+title: "Evolution of international research collaborative efforts to develop non-Cochrane systematic reviews"
 output:
   html_document:
         keep_md: true
 ---
+Datasets and scripts were used for PROSPERO records and SR's protocols analyses
+are integrated in this [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+These dataset and R scripts WERE created by Juan Ruano and co-authored by I. Viguera-Guerra(a,1), J. Ruano(b,c,1,∗), M. Aguilar-Luque(b), J. Gay-Mimbrera(b), A. Montilla(b,e), J. L.Fernández-Rueda(b), J. Fernández-Chaichio(b), J.L. Sanz-Cabanillas(b,c), P. Gómez-Arias(b,c), A. Vélez García-Nieto(b,c), F. Gómez-García(b,c), B. Isla-Tejera(b,d). a Agencia de Evaluación de Tecnologías Sanitarias de Andalucía (AETSA), 14004 Sevilla, Spain b IMIBIC/Reina Sofía University Hospital/University of Cordoba, 14004 Córdoba, Spain c Department of Dermatology, Reina Sofía University Hospital, 14004 Córdoba, Spain d Department of Pharmacy, Reina Sofía University Hospital, 14004 Córdoba, Spain e School of Medicine, University of Cordoba, 14004 Córdoba, Spain. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+They are of freely use (MIT License).
 
+1 Equal contributors
+
+Corresponding author: juanruanoruiz@mac.com
+
+# 0. Packages, functions, and datasets.
 
 
 ```{r}
+####  R packages  ---------------
 library(RISmed)
 library(readr)
 library(tidyverse)
@@ -20,6 +28,7 @@ library(tm)
 library(wordcloud)
 library(RColorBrewer)
 
+####  R functions  ---------------
 pubmed2df<-function(D){
   
   records=D
@@ -96,29 +105,31 @@ pubmed2df<-function(D){
 }
 
 ```
-```{r}
+
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+##### search Pubmed protocols records  -----------------
 search          <- '["Systematic review"[Title] AND "protocol"[Title]]'
 search_query    <-  EUtilsSummary(search, retmax=3000)
-QueryId(search_query)
-
-```
-
-```{r eval=FALSE, include=FALSE}
 records         <-  EUtilsGet(search_query)
 M               <-  pubmed2df(records)
 # write.csv(M, file="all_journal_SRs_PROTOCOLS_2.csv")
 ```
 
-1. FIGURE 2.
-This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue).
-```{r Fig_2, echo=TRUE}
-##### 0: read and tidy dataset ---------------
-new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
-names(new_data)
-##### corregir a <2018 para hacer los cáculos antiguos
-new_data<-subset(new_data, ALL_year>2010 & ALL_year<2018)
-new_data$ALL_year<-factor(new_data$ALL_year)
 
+```{r read_and_tidy, echo=TRUE}
+##### 0: read and tidy dataset ---------------
+new_data          <-  read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
+new_data          <-  subset(new_data, ALL_year>2010 & ALL_year<2018)
+new_data$ALL_year <- factor(new_data$ALL_year)
+```
+
+# Figure 1.
+
+This panel represent the main features of included protocols.  Only Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue) was obtained using the eulerr R package also available as a 'Area-Proportional Euler and Venn Diagrams with Circles or Ellipses' shiny app hosted at http://eulerr.co/.
+
+(a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
+
+```{r Fig_2, echo=TRUE}
 ### 1: plot protocols BY year x  group
 ggplot(new_data,aes(x=ALL_year, group=group, fill=group, color=group)) + 
 geom_bar () +
@@ -126,8 +137,8 @@ xlab("Year") +
 ylab("nº protocols")+
 ggtitle(" ")
 ```
-(a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
 
+(c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
 ```{r world map, warning=FALSE}
 library(rworldmap)
@@ -138,8 +149,9 @@ levels(data_map$country_categories) <- c("low", "med", "high", "vhigh")
 n                                   <- joinCountryData2Map(data_map, joinCode="NAME", nameJoinColumn="country")
 mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLegend = TRUE, oceanCol="lightblue", colourPalette="diverging", missingCountryCol="white")
 ```
-(c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
+
+(d) World cloud of 'unique countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 ```{r world_cloud_unique, warning=FALSE}
 set.seed(1234)
@@ -154,8 +166,8 @@ wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq)+1, max.
           random.order=FALSE, scale = c(4, 0.5), colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
-(d) World cloud of 'unique countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
+(e) World cloud of 'collaborative countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 ```{r world_cloud_collaborative, warning=FALSE}
 set.seed(1234)
@@ -172,7 +184,7 @@ wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq), max.wo
           random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
-(e) World cloud of 'collaborative countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
+(f) World cloud of 'scientific journals'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 ```{r warning=FALSE}
 set.seed(1234)
@@ -187,10 +199,14 @@ wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.
           random.order=FALSE, colors=brewer.pal(6,"Dark2"), random.color=TRUE)
 ```
 
-(f) World cloud of 'scientific journals'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
+
+(g) Column plots of ocurrences of 'unique countries' ranked by total number of protocols.
 
 
-```{r}
+
+# Figure 3.
+
+```{r, fig.width=8, fig.height=10}
 unique_countries<-new_data %>%
   filter(!str_detect(ALL_country_curated, ','))
 unique_countries_all<-unique_countries %>%
@@ -208,9 +224,9 @@ ggplot(table_unique_country, aes(reorder(Var1, Freq), Freq))+
   ylab("# of occurrences")
 ```
 
-(g) Column plots of ocurrences of 'unique countries' ranked by total number of protocols.
+(h) Column plots of co-ocurrences of 'collaborative countries' ranked by total number of protocols.
 
-```{r}
+```{r, fig.width=8, fig.height=15}
 table_collaborative_country<-subset(table_all_collaborative_countries_uk, Freq>1)
 ggplot(table_collaborative_country, aes(reorder(Var1, Freq), Freq))+
   coord_flip()+
@@ -222,9 +238,9 @@ ggplot(table_collaborative_country, aes(reorder(Var1, Freq), Freq))+
 ```
  
 
-(h) Column plots of co-ocurrences of 'collaborative countries' ranked by total number of protocols.
+(i) Column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 
-```{r}
+```{r, fig.width=8, fig.height=15}
 table_journal <- as.data.frame(table(new_data[,c(11)]))
 
 ggplot(table_journal, aes(reorder(Var1, Freq), Freq))+
@@ -237,11 +253,78 @@ ggplot(table_journal, aes(reorder(Var1, Freq), Freq))+
 ```
 
 
-(i) Column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+# FIGURE 3
+This panel represent frequency and time-course changes of SR protocol publication by journals.  
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+```{r, fig.width=8, fig.height=15}
+new_data_journal<-subset(new_data, group=="Only_Journal" | group=="PROSPERO_and_Journal")
+table_journal <- as.data.frame(table(new_data_journal[,c(11)]))
+new_data_journal_2<-merge(new_data_journal, table_journal, by.x="publication_journal", by.y = "Var1", all.x = TRUE)
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+ggplot(new_data_journal_2,aes(x=(reorder(publication_journal, Freq)), group=group, fill=group, color=group)) + 
+facet_grid(~group)+
+geom_bar () +
+coord_flip()+
+theme(axis.text.y=element_text(size=4))+
+xlab("Journal") +
+ylab("nº protocols")+
+ggtitle("SRs protocols by journal")+
+  theme(legend.position="none")
+```
+
+(a) Frequency of protocols published from 2011 to 2017 by journal comparing those protocols published 'only in a journal' with those protocols published in both 'journal and PROSPERO'.
+
+```{r,fig.width=8, fig.height=5}
+new_data_journal_top<-subset(new_data_journal,  publication_journal=="SYST REV"
+                               | publication_journal=="BMJ OPEN" 
+                               | publication_journal=="JBI DATABASE SYSTEM REV IMPLEMENT REP" 
+                               | publication_journal=="JMIR RES PROTOC" 
+                               | publication_journal=="MEDICINE (BALTIMORE)" 
+                               | publication_journal=="CLIN TRANSL ALLERGY" 
+                               | publication_journal=="TRIALS" 
+                               | publication_journal=="J ADV NURS" 
+                               | publication_journal=="JBI LIBR SYST REV" 
+                               | publication_journal=="NPJ PRIM CARE RESPIR MED" )
+
+table_journal_2 <- as.data.frame(table(new_data_journal_top[,c(11)]))
+new_data_journal_3<-merge(new_data_journal_top, table_journal_2, by.x="publication_journal", by.y = "Var1", all.x = TRUE)
+
+ggplot(new_data_journal_3,aes(x=(reorder(publication_journal, Freq)), group=group, fill=group, color=group)) + 
+facet_grid(~group)+
+geom_bar () +
+coord_flip()+
+theme(axis.text.y=element_text(size=4))+
+xlab("Journal") +
+ylab("nº protocols")+
+ggtitle("SRs protocols by journal")+
+  theme(legend.position="none")
+```
+
+(b) Magnified vision of plot (a) centered on TOP10 most publisher journals. 
+
+
+```{r}
+
+new_data_journal_top_2<-subset(new_data_journal,  publication_journal=="SYST REV"
+                               | publication_journal=="BMJ OPEN")
+
+
+ggplot(new_data_journal_top_2,aes(x=ALL_year, group=group, fill=group, color=group,linetype=group)) + 
+facet_grid(~publication_journal)+
+geom_point(stat = "count") +
+geom_line(stat = 'count', aes(group = group, colour = group, linetype=group))+
+#coord_flip()+
+theme(axis.text.y=element_text(size=4))+
+xlab("Year") +
+ylab("nº protocols")+
+ggtitle("SRs protocols by journal")+
+  theme_bw()+
+  theme(legend.position="top")
+
+```
+
+
+(c) Evolution of 'only journal' vs 'journal and PROSPERO' protocols publications from 2011 to 2017 comparing 'BMJ open' and 'Systematic Reviews' journals.
+
 
