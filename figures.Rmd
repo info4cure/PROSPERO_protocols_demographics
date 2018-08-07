@@ -2,7 +2,7 @@
 title: "R Notebook"
 output:
   html_document:
-    df_print: paged
+        keep_md: true
 ---
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
@@ -15,6 +15,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 library(RISmed)
 library(readr)
 library(tidyverse)
+library(rworldmap)
 
 pubmed2df<-function(D){
   
@@ -106,7 +107,7 @@ M               <-  pubmed2df(records)
 ```
 
 # 1. FIGURE 2.
-This panel represent the main features of included protocols. (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'. (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 ```{r Fig_2, echo=TRUE}
 
 
@@ -123,6 +124,18 @@ geom_bar () +
 xlab("Year") +
 ylab("nº protocols")+
 ggtitle(" ")
+```
+(a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
+
+
+```{r}
+library(rworldmap)
+data_map                            <- as.data.frame(read.csv2(file="unique_countries_count_resumed.csv", sep=" "))
+cutVector                           <- quantile(data_map$count,na.rm=TRUE)
+data_map$country_categories         <- cut(data_map$count, cutVector, include.lowest=TRUE )
+levels(data_map$country_categories) <- c("low", "med", "high", "vhigh")
+n                                   <- joinCountryData2Map(data_map, joinCode="NAME", nameJoinColumn="country")
+mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLegend = TRUE, oceanCol="lightblue", colourPalette="diverging", missingCountryCol="white")
 ```
 
 
