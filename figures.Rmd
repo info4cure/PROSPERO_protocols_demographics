@@ -109,8 +109,8 @@ M               <-  pubmed2df(records)
 # write.csv(M, file="all_journal_SRs_PROTOCOLS_2.csv")
 ```
 
-# 1. FIGURE 2.
-This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+1. FIGURE 2.
+This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue).
 ```{r Fig_2, echo=TRUE}
 ##### 0: read and tidy dataset ---------------
 new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
@@ -129,7 +129,7 @@ ggtitle(" ")
 (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
 
 
-```{r}
+```{r world map, warning=FALSE}
 library(rworldmap)
 data_map                            <- as.data.frame(read.csv2(file="unique_countries_count_resumed.csv", sep=" "))
 cutVector                           <- quantile(data_map$count,na.rm=TRUE)
@@ -141,7 +141,8 @@ mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLeg
 (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
 
-```{r}
+```{r world_cloud_unique, warning=FALSE}
+set.seed(1234)
 unique_countries                     <- new_data %>%
   filter(!str_detect(ALL_country_curated, ','))
 unique_countries_all                 <- unique_countries %>%
@@ -150,13 +151,14 @@ unique_countries_all                 <- unique_countries %>%
 table_all_unique_countries           <- as.data.frame(table(unique_countries_all[,c(16)]))
 table_country                        <- subset(table_all_unique_countries, Freq>1)
 wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq)+1, max.words = 300, min.freq = 1, 
-          random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
+          random.order=FALSE, scale = c(4, 0.5), colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
-(d) World cloud of 'unique countries'.
+(d) World cloud of 'unique countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 
-```{r}
+```{r world_cloud_collaborative, warning=FALSE}
+set.seed(1234)
 collaborative_countries              <-new_data %>%
   filter(str_detect(ALL_country_curated, ','))
 table_all_collaborative_countries <- as.data.frame(table(collaborative_countries[,c(16)]))
@@ -169,9 +171,11 @@ set.seed(1234)
 wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq), max.words = 300, min.freq = 1, scale = c(3, 0.2),
           random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
-(e) World cloud of 'collaborative countries'.
+
+(e) World cloud of 'collaborative countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 ```{r warning=FALSE}
+set.seed(1234)
 new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
 new_data<-subset(new_data, ALL_year>2010 & ALL_year<2019)
 new_data$ALL_year<-factor(new_data$ALL_year)
@@ -183,10 +187,57 @@ wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.
           random.order=FALSE, colors=brewer.pal(6,"Dark2"), random.color=TRUE)
 ```
 
-(f) World cloud of 'scientific journals'.
+(f) World cloud of 'scientific journals'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 
-,(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. 
+```{r}
+unique_countries<-new_data %>%
+  filter(!str_detect(ALL_country_curated, ','))
+unique_countries_all<-unique_countries %>%
+  filter(!str_detect(ALL_country_curated, '\t'))
+
+table_all_unique_countries <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_unique_country<-subset(table_all_unique_countries, Freq>1)
+
+ggplot(table_unique_country, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=6))+
+  xlab(" ")+
+  ylab("# of occurrences")
+```
+
+(g) Column plots of ocurrences of 'unique countries' ranked by total number of protocols.
+
+```{r}
+table_collaborative_country<-subset(table_all_collaborative_countries_uk, Freq>1)
+ggplot(table_collaborative_country, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=4))+
+  xlab(" ")+
+  ylab("# of co-occurrences")
+```
+ 
+
+(h) Column plots of co-ocurrences of 'collaborative countries' ranked by total number of protocols.
+
+```{r}
+table_journal <- as.data.frame(table(new_data[,c(11)]))
+
+ggplot(table_journal, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=5))+
+  xlab(" ")+
+  ylab("# protocols")
+```
+
+
+(i) Column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 

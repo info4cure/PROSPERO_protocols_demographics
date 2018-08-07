@@ -36,10 +36,6 @@ library(tidyverse)
 ```
 
 ```r
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 library(rworldmap)
 ```
 
@@ -56,7 +52,6 @@ library(rworldmap)
 ```
 
 ```r
-<<<<<<< HEAD
 library(tm)
 ```
 
@@ -86,10 +81,6 @@ library(wordcloud)
 ```r
 library(RColorBrewer)
 
-=======
-=======
->>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
->>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 pubmed2df<-function(D){
   
   records=D
@@ -490,16 +481,8 @@ QueryId(search_query)
 
 
 
-# 1. FIGURE 2.
-<<<<<<< HEAD
-This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
-=======
-<<<<<<< HEAD
-This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
-=======
-This panel represent the main features of included protocols. (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'. (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
->>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
->>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
+1. FIGURE 2.
+This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue).
 
 ```r
 ##### 0: read and tidy dataset ---------------
@@ -544,10 +527,6 @@ ggtitle(" ")
 ```
 
 ![](figures_files/figure-html/Fig_2-1.png)<!-- -->
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 (a) Frequency of protocols published from 2011 to 2017 comparing those protocols published 'only in a journal', 'only at PROSPERO', and in both 'journal and PROSPERO'.
 
 
@@ -575,13 +554,13 @@ mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLeg
 ## using catMethod='categorical' for non numeric data in mapCountryData
 ```
 
-![](figures_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
-<<<<<<< HEAD
+![](figures_files/figure-html/world map-1.png)<!-- -->
 (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
 
 
 ```r
+set.seed(1234)
 unique_countries                     <- new_data %>%
   filter(!str_detect(ALL_country_curated, ','))
 unique_countries_all                 <- unique_countries %>%
@@ -590,16 +569,17 @@ unique_countries_all                 <- unique_countries %>%
 table_all_unique_countries           <- as.data.frame(table(unique_countries_all[,c(16)]))
 table_country                        <- subset(table_all_unique_countries, Freq>1)
 wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq)+1, max.words = 300, min.freq = 1, 
-          random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
+          random.order=FALSE, scale = c(4, 0.5), colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
-![](figures_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](figures_files/figure-html/world_cloud_unique-1.png)<!-- -->
 
-(d) World cloud of 'unique countries'.
+(d) World cloud of 'unique countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 
 
 ```r
+set.seed(1234)
 collaborative_countries              <-new_data %>%
   filter(str_detect(ALL_country_curated, ','))
 table_all_collaborative_countries <- as.data.frame(table(collaborative_countries[,c(16)]))
@@ -613,485 +593,13 @@ wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq), max.wo
           random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, NETHERLANDS could not be fit on page.
-## It will not be plotted.
-```
+![](figures_files/figure-html/world_cloud_collaborative-1.png)<!-- -->
 
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : BRAZIL, NETHERLANDS could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CHINA, NETHERLANDS could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : EGYPT, JAPAN, PAKISTAN, VIETNAM could not be fit
-## on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GERMANY, SWITZERLAND could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : JAPAN, VIETNAM could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : SOUTH AFRICA, USA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, SWITZERLAND could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : EGYPT, JAPAN, PAKISTAN could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : EGYPT, JAPAN, USA, VIETNAM could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GERMANY, GREECE could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NORWAY,DENMARK could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, FRANCE, NETHERLANDS, SPAIN could not be fit
-## on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, SAUDI ARABIA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, SAUDI ARABIA could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, SOUTH AFRICA could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : BRAZIL, CANADA, USA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CAMEROON,FRANCE,USA,SOUTH AFRICA could not be
-## fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CAMEROON,SOUTH AFRICA could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : DENMARK, NETHERLANDS could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : DENMARK,NORWAY could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GERMANY, IRELAND, ITALY, NETHERLANDS, SPAIN
-## could not be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NORWAY, SWEDEN could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NORWAY,AUSTRALIA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, CANADA, USA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, GERMANY, USA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, SWEDEN could not be fit on page. It will not
-## be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : USA,AUSTRALIA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : USA,GERMANY could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : ZIMBABWE,SOUTH AFRICA, could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, BELGIUM could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, CANADA, USA could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, ITALY, NEW ZEALAND, SWEDEN could not
-## be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, MEXICO, USA could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, PHILIPPINES could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA, SINGAPORE could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : AUSTRALIA,UK,NETHERLANDS,BELGIUM,ITALY could not
-## be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : BELGIUM, SWITZERLAND could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : BELGIUM,AUSTRALIA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CAMEROON,UK could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CANADA, NETHERLANDS could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CHILE, GERMANY could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : CHINA, SOUTH AFRICA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : COLOMBIA, NORWAY could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : DENMARK, FRANCE could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : EGYPT, INDIA, INDONESIA, JAPAN, NEPAL, USA,
-## VIETNAM could not be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : FRANCE, SWITZERLAND could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GERMANY, SWITZERLAND, USA could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GHANA, SOUTH AFRICA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : GHANA,SOUTH AFRICA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : IRELAND, NETHERLANDS could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : ITALY, NETHERLANDS could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : ITALY, PORTUGAL could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : JAPAN, SOUTH KOREA, VIETNAM could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NETHERLANDS, SINGAPORE could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NETHERLANDS, SPAIN could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : NETHERLANDS, SWITZERLAND could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : PORTUGAL, USA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : SPAIN,PORTUGAL,CHILE could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : SWEDEN, USA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : SWITZERLAND,CANADA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, AUSTRALIA, BELGIUM, CANADA, IRELAND, USA
-## could not be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, AUSTRALIA, DENMARK, FRANCE, GERMANY,
-## NETHERLANDS, USA could not be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, AUSTRALIA, NETHERLANDS, USA could not be fit
-## on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, AUSTRALIA, SWITZERLAND could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, BELGIUM, FRANCE, NETHERLANDS could not be
-## fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, BRAZIL, CHINA, DENMARK, FINLAND, HONG KONG,
-## SOUTH KOREA, TAIWAN, USA could not be fit on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, BRAZIL, GREECE could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, CHINA, IRAN, SOUTH AFRICA could not be fit
-## on page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, DENMARK, USA could not be fit on page. It
-## will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, GERMANY, SOUTH AFRICA could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, INDIA, USA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, JAPAN, SWITZERLAND could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK, NETHERLANDS, SWITZERLAND could not be fit on
-## page. It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UK,USA,CANADA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : UNITED KINGDOM, CANADA could not be fit on page.
-## It will not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : USA, CANADA could not be fit on page. It will
-## not be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : USA,CANADA could not be fit on page. It will not
-## be plotted.
-```
-
-```
-## Warning in wordcloud(table_country$Var1, table_country$Freq/
-## min(table_country$Freq), : USA,SWITZERLAND could not be fit on page. It
-## will not be plotted.
-```
-
-![](figures_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
-(e) World cloud of 'collaborative countries'.
+(e) World cloud of 'collaborative countries'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
 
 
 ```r
+set.seed(1234)
 new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
 new_data<-subset(new_data, ALL_year>2010 & ALL_year<2019)
 new_data$ALL_year<-factor(new_data$ALL_year)
@@ -1103,16 +611,68 @@ wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.
           random.order=FALSE, colors=brewer.pal(6,"Dark2"), random.color=TRUE)
 ```
 
+![](figures_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+(f) World cloud of 'scientific journals'. Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned.
+
+
+
+```r
+unique_countries<-new_data %>%
+  filter(!str_detect(ALL_country_curated, ','))
+unique_countries_all<-unique_countries %>%
+  filter(!str_detect(ALL_country_curated, '\t'))
+
+table_all_unique_countries <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_unique_country<-subset(table_all_unique_countries, Freq>1)
+
+ggplot(table_unique_country, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=6))+
+  xlab(" ")+
+  ylab("# of occurrences")
+```
+
+![](figures_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+(g) Column plots of ocurrences of 'unique countries' ranked by total number of protocols.
+
+
+```r
+table_collaborative_country<-subset(table_all_collaborative_countries_uk, Freq>1)
+ggplot(table_collaborative_country, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=4))+
+  xlab(" ")+
+  ylab("# of co-occurrences")
+```
+
+![](figures_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+ 
+
+(h) Column plots of co-ocurrences of 'collaborative countries' ranked by total number of protocols.
+
+
+```r
+table_journal <- as.data.frame(table(new_data[,c(11)]))
+
+ggplot(table_journal, aes(reorder(Var1, Freq), Freq))+
+  coord_flip()+
+  geom_bar(stat="identity",color="steelblue", fill="lightgray")+
+  theme_minimal()+
+  theme(text = element_text(size=5))+
+  xlab(" ")+
+  ylab("# protocols")
+```
+
 ![](figures_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
-(f) World cloud of 'scientific journals'.
-=======
-=======
->>>>>>> bc2fdee9c21d63f4192d1bb511f6b6bacc731e68
->>>>>>> d93aab4d2b4fd282319096ec60104bba231a59c9
 
-
-,(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. 
+(i) Column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
