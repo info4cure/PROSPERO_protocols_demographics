@@ -16,6 +16,9 @@ library(RISmed)
 library(readr)
 library(tidyverse)
 library(rworldmap)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
 
 pubmed2df<-function(D){
   
@@ -107,10 +110,8 @@ M               <-  pubmed2df(records)
 ```
 
 # 1. FIGURE 2.
-This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). (d),(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
+This panel represent the main features of included protocols.  (b) Venn diagram of number protocols published 'only in a journal' (coral), 'only at PROSPERO' (green), and their intersection, both 'journal and PROSPERO' (blue). (g), (h), and (i) represent  column plots of 'unique countries' (g), 'collaborative countries' (h), and journals (i) ranked by total number of protocols.
 ```{r Fig_2, echo=TRUE}
-
-
 ##### 0: read and tidy dataset ---------------
 new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
 names(new_data)
@@ -137,8 +138,55 @@ levels(data_map$country_categories) <- c("low", "med", "high", "vhigh")
 n                                   <- joinCountryData2Map(data_map, joinCode="NAME", nameJoinColumn="country")
 mapCountryData(n, nameColumnToPlot="country_categories", mapTitle="World",addLegend = TRUE, oceanCol="lightblue", colourPalette="diverging", missingCountryCol="white")
 ```
+(c) Map representation of number of protocols produced by country (as proxy of reviewer's affiliation country). Colours represent levels of productivity defined by quartiles of a new recoded variable [abs(log2(country.count/all.countries.count))] (red, very high; yellow, high; green, medium; blue, low). 
 
 
+```{r}
+unique_countries                     <- new_data %>%
+  filter(!str_detect(ALL_country_curated, ','))
+unique_countries_all                 <- unique_countries %>%
+  filter(!str_detect(ALL_country_curated, '\t'))
+
+table_all_unique_countries           <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_country                        <- subset(table_all_unique_countries, Freq>1)
+wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq)+1, max.words = 300, min.freq = 1, 
+          random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
+```
+
+(d) World cloud of 'unique countries'.
+
+
+```{r}
+collaborative_countries              <-new_data %>%
+  filter(str_detect(ALL_country_curated, ','))
+table_all_collaborative_countries <- as.data.frame(table(collaborative_countries[,c(16)]))
+
+table_all_collaborative_countries_uk <-table_all_collaborative_countries %>%
+  filter(!str_detect(Var1, "UK, UK|UK, UK, UK|UK, UK, UK, UK|POLAND"))
+
+table_country                        <- subset(table_all_collaborative_countries_uk, Freq>1)
+set.seed(1234)
+wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq), max.words = 300, min.freq = 1, scale = c(3, 0.2),
+          random.order=FALSE, colors=brewer.pal(8,"Dark2"), random.color=TRUE)
+```
+(e) World cloud of 'collaborative countries'.
+
+```{r warning=FALSE}
+new_data<-read.csv("protocol_dataset_curated_17JUN2018.csv", sep=";")
+new_data<-subset(new_data, ALL_year>2010 & ALL_year<2019)
+new_data$ALL_year<-factor(new_data$ALL_year)
+new_data_journal<-subset(new_data, group=="Only_Journal" | group=="PROSPERO_and_Journal")
+table_journal <- as.data.frame(table(new_data_journal[,c(11)]))
+
+table_journal<-subset(table_journal, Freq>0)
+wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.words = 120, min.freq = 0, 
+          random.order=FALSE, colors=brewer.pal(6,"Dark2"), random.color=TRUE)
+```
+
+(f) World cloud of 'scientific journals'.
+
+
+,(e), and (f) represent world clouds of 'unique countries' (d), 'collaborative countries' (e), and journals (f). Text size and centering is proportional to the associated number of protocols. Colours have been randomly assigned. 
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
