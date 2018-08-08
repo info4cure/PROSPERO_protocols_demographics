@@ -1336,7 +1336,7 @@ unique_countries_all                 <- unique_countries %>%
 table_all_unique_countries           <- as.data.frame(table(unique_countries_all[,c(16)]))
 table_country                        <- subset(table_all_unique_countries, Freq>1)
 wordcloud(table_country$Var1, table_country$Freq/min(table_country$Freq)+1, max.words = 300, min.freq = 1, 
-          random.order=FALSE, scale = c(4, 0.5), colors=brewer.pal(8,"Dark2"), random.color=TRUE)
+          random.order=FALSE, scale = c(5, 0.8), colors=brewer.pal(8,"Dark2"), random.color=TRUE)
 ```
 
 ![](figures_files/figure-html/world_cloud_unique-1.png)<!-- -->
@@ -1372,10 +1372,10 @@ new_data<-subset(new_data, ALL_year>2010 & ALL_year<2019)
 new_data$ALL_year<-factor(new_data$ALL_year)
 new_data_journal<-subset(new_data, group=="Only_Journal" | group=="PROSPERO_and_Journal")
 table_journal <- as.data.frame(table(new_data_journal[,c(11)]))
-
+levels(table_journal$Var1)[levels(table_journal$Var1)=="JBI DATABASE SYSTEM REV IMPLEMENT REP" ] <- "JBI DATABASE S R I R"
 table_journal<-subset(table_journal, Freq>0)
 wordcloud(table_journal$Var1, table_journal$Freq/min(table_journal$Freq)+1, max.words = 120, min.freq = 0, 
-          random.order=FALSE, colors=brewer.pal(6,"Dark2"), random.color=TRUE)
+          random.order=FALSE, scale = c(3, 0.4),colors=brewer.pal(6,"Dark2"), random.color=TRUE)
 ```
 
 ![](figures_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
@@ -1393,8 +1393,10 @@ unique_countries<-new_data %>%
   filter(!str_detect(ALL_country_curated, ','))
 unique_countries_all<-unique_countries %>%
   filter(!str_detect(ALL_country_curated, '\t'))
+unique_countries_final<-unique_countries_all %>%
+  filter(!str_detect(ALL_country_curated, ' '))
 
-table_all_unique_countries <- as.data.frame(table(unique_countries_all[,c(16)]))
+table_all_unique_countries <- as.data.frame(table(unique_countries_final[,c(16)]))
 table_unique_country<-subset(table_all_unique_countries, Freq>1)
 
 ggplot(table_unique_country, aes(reorder(Var1, Freq), Freq))+
@@ -1488,7 +1490,7 @@ ggplot(new_data_journal_3,aes(x=(reorder(publication_journal, Freq)), group=grou
 facet_grid(~group)+
 geom_bar () +
 coord_flip()+
-theme(axis.text.y=element_text(size=4))+
+theme(axis.text.y=element_text(size=12))+
 xlab("Journal") +
 ylab("nº protocols")+
 ggtitle("SRs protocols by journal")+
@@ -1505,6 +1507,7 @@ ggtitle("SRs protocols by journal")+
 new_data_journal_top_2<-subset(new_data_journal,  publication_journal=="SYST REV"
                                | publication_journal=="BMJ OPEN")
 
+new_data_journal_top_2<-subset(new_data_journal_top_2,  ALL_year!="2018")
 
 ggplot(new_data_journal_top_2,aes(x=ALL_year, group=group, fill=group, color=group,linetype=group)) + 
 facet_grid(~publication_journal)+
@@ -1514,7 +1517,7 @@ geom_line(stat = 'count', aes(group = group, colour = group, linetype=group))+
 theme(axis.text.y=element_text(size=4))+
 xlab("Year") +
 ylab("nº protocols")+
-ggtitle("SRs protocols by journal")+
+ggtitle(" ")+
   theme_bw()+
   theme(legend.position="top")
 ```
@@ -1544,6 +1547,7 @@ coord_flip()+
 theme(axis.text.y=element_text(size=4))+
 xlab("countries") +
 ylab("nº protocols")+
+theme(legend.position=" ")+
 ggtitle("SRs protocols published in 'Syst Rev' or 'BMJ Open' by countries")
 ```
 
@@ -1571,7 +1575,7 @@ ggplot(na.omit(ordered_unique_countries_dataset),aes(x=reorder(ALL_country_curat
 facet_grid(~group)+
 geom_bar()+
 coord_flip()+
-theme(axis.text.y=element_text(size=4))+
+theme(axis.text.y=element_text(size=12))+
 xlab("countries") +
 ylab("nº protocols")+
   theme(legend.position="none")+
@@ -1611,7 +1615,7 @@ ggplot(na.omit(ordered_unique_countries_dataset),aes(x=ALL_year,color=ALL_countr
   scale_x_continuous(limits=c(2011, 2017), breaks = c(2011,2012,2013,2014,2015,2016,2017))+
   xlab("Year") +
   ylab("nº protocols")+
-  ggtitle("SRs protocols by journal")
+  ggtitle(" ")
 ```
 
 ![](figures_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
